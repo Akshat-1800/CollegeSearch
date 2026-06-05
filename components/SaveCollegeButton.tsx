@@ -1,36 +1,59 @@
 "use client";
 
+import { useState } from "react";
+import { Bookmark } from "lucide-react";
+import { toast } from "sonner";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+type SaveCollegeButtonProps = {
+  collegeId: string;
+  className?: string;
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  size?: React.ComponentProps<typeof Button>["size"];
+};
+
 export default function SaveCollegeButton({
   collegeId,
-}: {
-  collegeId: string;
-}) {
+  className,
+  variant = "default",
+  size = "default",
+}: SaveCollegeButtonProps) {
+  const [loading, setLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
+
   async function saveCollege() {
-    const res = await fetch(
-      "/api/save-college",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          collegeId,
-        }),
-      }
-    );
+    if (loading) return;
+
+    setLoading(true);
+    const res = await fetch("/api/save-college", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        collegeId,
+      }),
+    });
 
     if (res.ok) {
-      alert("College Saved");
+      toast.success("College saved successfully");
     }
+
+    setLoading(false);
   }
 
   return (
-    <button
+    <Button
       onClick={saveCollege}
-      className="rounded bg-black px-4 py-2 text-white"
+      variant={variant}
+      size={size}
+      className={cn("gap-2", className)}
+      disabled={loading}
     >
-      Save College
-    </button>
+      <Bookmark className="size-4" />
+      {loading ? "Saving..." : "Save College"}
+    </Button>
   );
 }

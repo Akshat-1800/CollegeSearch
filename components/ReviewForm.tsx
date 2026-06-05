@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Star } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ReviewForm({
   collegeId,
@@ -65,70 +70,67 @@ export default function ReviewForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mb-6 space-y-4 rounded-lg border p-4"
-    >
-      <h3 className="text-lg font-semibold">
-        Write a Review
-      </h3>
+    <Card className="border-dashed">
+      <CardContent className="space-y-4 p-5">
+        <div>
+          <h3 className="text-lg font-semibold">Write a Review</h3>
+          <p className="text-[0.95rem] text-muted-foreground">
+            Share your experience to help future students.
+          </p>
+        </div>
 
-      <div>
-        <label className="mb-1 block">
-          Rating
-        </label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="rating"
+              className="mb-1 block text-[0.95rem] font-medium"
+            >
+              Rating
+            </label>
+            <div className="relative">
+              <Star className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <select
+                id="rating"
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+                className="h-10 w-full rounded-lg border bg-background pl-9 pr-3 text-[0.95rem] text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <option value={5}>5 - Excellent</option>
+                <option value={4}>4 - Very Good</option>
+                <option value={3}>3 - Good</option>
+                <option value={2}>2 - Fair</option>
+                <option value={1}>1 - Poor</option>
+              </select>
+            </div>
+          </div>
 
-        <select
-          value={rating}
-          onChange={(e) =>
-            setRating(
-              Number(e.target.value)
-            )
-          }
-          className="w-full rounded border p-2"
-        >
-          <option value={5}>5 ⭐</option>
-          <option value={4}>4 ⭐</option>
-          <option value={3}>3 ⭐</option>
-          <option value={2}>2 ⭐</option>
-          <option value={1}>1 ⭐</option>
-        </select>
-      </div>
+          <div>
+            <label
+              htmlFor="review"
+              className="mb-1 block text-[0.95rem] font-medium"
+            >
+              Review
+            </label>
+            <Textarea
+              id="review"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              required
+              placeholder="Share your experience..."
+            />
+          </div>
 
-      <div>
-        <label className="mb-1 block">
-          Review
-        </label>
+          {error && (
+            <p className="text-[0.95rem] text-destructive" role="alert">
+              {error}
+            </p>
+          )}
 
-        <textarea
-          value={comment}
-          onChange={(e) =>
-            setComment(
-              e.target.value
-            )
-          }
-          required
-          rows={4}
-          placeholder="Share your experience..."
-          className="w-full rounded border p-3"
-        />
-      </div>
-
-      {error && (
-        <p className="text-sm text-red-500">
-          {error}
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-      >
-        {loading
-          ? "Submitting..."
-          : "Submit Review"}
-      </button>
-    </form>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Submitting..." : "Submit Review"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

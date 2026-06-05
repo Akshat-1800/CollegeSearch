@@ -1,18 +1,29 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { Scale } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+type AddToCompareButtonProps = {
+  collegeId: string;
+  className?: string;
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  size?: React.ComponentProps<typeof Button>["size"];
+};
 
 export default function AddToCompareButton({
   collegeId,
-}: {
-  collegeId: string;
-}) {
+  className,
+  variant = "secondary",
+  size = "default",
+}: AddToCompareButtonProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   function handleCompare() {
-    const compareParam =
-      searchParams.get("compare");
+    const compareParam = searchParams.get("compare");
 
     const ids = compareParam
       ? compareParam.split(",").filter(Boolean)
@@ -23,34 +34,28 @@ export default function AddToCompareButton({
     }
 
     if (ids.length >= 3) {
-      alert(
-        "Maximum 3 colleges can be compared."
-      );
+      alert("Maximum 3 colleges can be compared.");
       return;
     }
 
     const newIds = [...ids, collegeId];
 
-    const params = new URLSearchParams(
-      searchParams.toString()
-    );
+    const params = new URLSearchParams(searchParams.toString());
 
-    params.set(
-      "compare",
-      newIds.join(",")
-    );
+    params.set("compare", newIds.join(","));
 
-    router.push(
-      `/colleges?${params.toString()}`
-    );
+    router.push(`/colleges?${params.toString()}`);
   }
 
   return (
-    <button
+    <Button
       onClick={handleCompare}
-      className="rounded bg-blue-600 px-4 py-2 text-white"
+      variant={variant}
+      size={size}
+      className={cn("gap-2", className)}
     >
+      <Scale className="size-4" />
       Compare
-    </button>
+    </Button>
   );
 }

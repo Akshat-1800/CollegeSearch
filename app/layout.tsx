@@ -4,6 +4,8 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ToasterProvider from "@/components/ToasterProvider";
+import { syncUser } from "@/lib/sync-user";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,23 +22,28 @@ export const metadata: Metadata = {
   description: "Search, compare and save top colleges across India with CollegeSearch.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}
+
+: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) 
+{
+  await syncUser();
   return (
     <ClerkProvider>
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
-    </html>
+      <html
+        lang="en"
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      >
+        <body className="min-h-full flex flex-col bg-background text-foreground">
+          <Navbar />
+          {children}
+          <Footer />
+          <ToasterProvider />
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
